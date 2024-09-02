@@ -10,12 +10,15 @@ namespace Tests.Controllers
     public class DatabaseControllerTests
     {
         private readonly Mock<IUserService> _userServiceMock;
+        private readonly Mock<IPostService> _postServiceMock;
         private readonly DatabaseController _controller;
 
         public DatabaseControllerTests()
         {
             _userServiceMock = new Mock<IUserService>();
-            _controller = new DatabaseController(_userServiceMock.Object);
+            _postServiceMock = new Mock<IPostService>();
+            _controller = new DatabaseController(_userServiceMock.Object, _postServiceMock.Object);
+            
         }
 
         [Fact]
