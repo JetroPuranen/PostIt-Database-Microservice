@@ -21,6 +21,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IPostRepository, PostsRepository>();
 
+
+builder.Services.AddScoped<IFollowerService, FollowerService>();
+builder.Services.AddScoped<IUnfollowService, UnfollowService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

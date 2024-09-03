@@ -3,7 +3,7 @@ using Moq;
 using PostIt.Application.Dto;
 using PostIt.Application.Interfaces;
 using PostIt.Database.Controllers;
-using Xunit;
+
 
 namespace Tests.Controllers
 {
@@ -11,14 +11,23 @@ namespace Tests.Controllers
     {
         private readonly Mock<IUserService> _userServiceMock;
         private readonly Mock<IPostService> _postServiceMock;
+        private readonly Mock<IFollowerService> _followerServiceMock;  
+        private readonly Mock<IUnfollowService> _unfollowServiceMock;  
         private readonly DatabaseController _controller;
 
         public DatabaseControllerTests()
         {
             _userServiceMock = new Mock<IUserService>();
             _postServiceMock = new Mock<IPostService>();
-            _controller = new DatabaseController(_userServiceMock.Object, _postServiceMock.Object);
+            _followerServiceMock = new Mock<IFollowerService>();  
+            _unfollowServiceMock = new Mock<IUnfollowService>();  
+
             
+            _controller = new DatabaseController(
+                _userServiceMock.Object,
+                _postServiceMock.Object,
+                _followerServiceMock.Object,
+                _unfollowServiceMock.Object);
         }
 
         [Fact]
