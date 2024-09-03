@@ -11,11 +11,19 @@ namespace PostIt.Database.Controllers
     {
         private readonly IUserService _userService;
         private readonly IPostService _postService;
+        private readonly IFollowerService _followerService;
+        private readonly IUnfollowService _unfollowService;
 
-        public DatabaseController(IUserService userService, IPostService postService)
+        public DatabaseController(
+            IUserService userService,
+            IPostService postService,
+            IFollowerService followerService,
+            IUnfollowService unfollowService)
         {
             _userService = userService;
             _postService = postService;
+            _followerService = followerService;
+            _unfollowService = unfollowService;
         }
 
         [HttpPost("addUser")]
@@ -40,6 +48,30 @@ namespace PostIt.Database.Controllers
 
             await _postService.AddPostAsync(postDto);
             return Ok("Post created successfully.");
+        }
+
+        [HttpPost("addFollower")]
+        public async Task<IActionResult> AddFollower([FromBody] FollowerDto followerDto)
+        {
+            if (followerDto == null)
+            {
+                return BadRequest("Follower data is null.");
+            }
+
+            await _followerService.AddFollowerAsync(followerDto);
+            return Ok("Follower added successfully.");
+        }
+
+        [HttpPost("unfollowUser")]
+        public async Task<IActionResult> UnfollowUser([FromBody] UnfollowDto unfollowDto)
+        {
+            if (unfollowDto == null)
+            {
+                return BadRequest("Unfollow data is null.");
+            }
+
+            await _unfollowService.RemoveFollowerAsync(unfollowDto);
+            return Ok("Unfollowed user successfully.");
         }
     }
 }
