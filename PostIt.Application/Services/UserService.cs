@@ -49,5 +49,15 @@ namespace PostIt.Application.Services
             };
         }
 
+        public async Task DeleteUserAsync(Guid id)
+        {
+            var user = await GetUserByIdAsync(id);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found");
+            }
+            await _userRepository.DeleteUserAsync(id);
+        }
+
     }
 }

@@ -7,5 +7,7 @@ namespace PostIt.Application.Interfaces
     {
         Task AddUserAsync(UserDto userDto);
         Task<UserDetailDto?> GetUserByIdAsync(Guid id);
+
+        Task DeleteUserAsync(Guid id);
     }
 }

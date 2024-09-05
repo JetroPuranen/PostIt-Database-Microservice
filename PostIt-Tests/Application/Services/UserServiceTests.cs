@@ -81,6 +81,36 @@ namespace Tests.Services
             
             Assert.Null(result);
         }
+        [Fact]
+        public async Task DeleteUserAsync_CallsRepositoryDeleteAsync_WhenUserExists()
+        {
+            var userId = Guid.NewGuid();
+            var user = new Users
+            {
+                Id = userId,
+                Username = "testuser",
+                FirstName = "test",
+                SurName = "test",
+            };
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(userId)).ReturnsAsync(user);
+
+            
+            await _userService.DeleteUserAsync(userId);
+
+            _userRepositoryMock.Verify(repo => repo.DeleteUserAsync(userId), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_ThrowsArgumentException_WhenUserDoesNotExist()
+        {
+            var userId = Guid.NewGuid();
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(userId)).ReturnsAsync((Users?)null);
+
+           
+            await Assert.ThrowsAsync<ArgumentException>(() => _userService.DeleteUserAsync(userId));
+        }
     }
 }
 

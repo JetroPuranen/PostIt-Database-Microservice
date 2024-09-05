@@ -8,7 +8,8 @@ namespace PostIt.Domain.Interfaces
         Task<Users> GetUserByUsernameAsync(string username);
         Task UpdateAsync(Users user);
         Task AddAsync(Users user);
-
         Task<Users?> GetUserByIdAsync(Guid id);
+
+        Task DeleteUserAsync(Guid id);
     }
 }
