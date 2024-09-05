@@ -44,7 +44,7 @@ namespace Tests.Repositories
         [Fact]
         public async Task GetUserByIdAsync_ReturnsUser_WhenUserExists()
         {
-            // Arrange
+         
             var user = new Users
             {
                 Id = Guid.NewGuid(),
@@ -56,10 +56,10 @@ namespace Tests.Repositories
             };
             await _repository.AddAsync(user);
 
-            // Act
+           
             var retrievedUser = await _repository.GetUserByIdAsync(user.Id);
 
-            // Assert
+           
             Assert.NotNull(retrievedUser);
             Assert.Equal(user.Id, retrievedUser.Id);
             Assert.Equal(user.Username, retrievedUser.Username);
@@ -109,6 +109,39 @@ namespace Tests.Repositories
             
             Assert.NotNull(updatedUser);
             Assert.Equal("Samuel", updatedUser.FirstName);
+        }
+        [Fact]
+        public async Task DeleteUserAsync_RemovesUser_WhenUserExists()
+        {
+        
+            var user = new Users
+            {
+                Username = "testuserToDelete",
+                Password = "password123",
+                FirstName = "ToDelete",
+                SurName = "User",
+                EmailAddress = "todelete.user@example.com"
+            };
+            await _repository.AddAsync(user);
+
+       
+            await _repository.DeleteUserAsync(user.Id);
+
+        
+            var deletedUser = await _context.Users.FindAsync(user.Id);
+            Assert.Null(deletedUser);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_DoesNothing_WhenUserDoesNotExist()
+        {
+           
+            var nonExistentUserId = Guid.NewGuid();
+
+            await _repository.DeleteUserAsync(nonExistentUserId);
+
+            var userCount = await _context.Users.CountAsync();
+            Assert.Equal(1, userCount); 
         }
     }
 }

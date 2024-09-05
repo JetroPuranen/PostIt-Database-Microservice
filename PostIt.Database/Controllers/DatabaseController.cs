@@ -86,5 +86,11 @@ namespace PostIt.Database.Controllers
 
             return Ok(user);
         }
+        [HttpDelete("deleteUser/{id}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            await _userService.DeleteUserAsync(id);
+            return Ok("User deleted successfully.");
+        }
     }
 }
