@@ -43,5 +43,44 @@ namespace Tests.Services
                 u.EmailAddress == userDto.EmailAddress
             )), Times.Once);
         }
+
+        [Fact]
+        public async Task GetUserByIdAsync_ReturnsUserDetailDto_WhenUserExists()
+        {
+            
+            var userId = Guid.NewGuid();
+            var user = new Users
+            {
+                Id = userId,
+                Username = "testuser",
+                FirstName = "John",
+                SurName = "Doe",
+            };
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(userId)).ReturnsAsync(user);
+
+           
+            var result = await _userService.GetUserByIdAsync(userId);
+
+            Assert.NotNull(result);
+            Assert.IsType<UserDetailDto>(result);
+            Assert.Equal(user.Username, result.Username);
+            Assert.Equal(user.FirstName, result.FirstName);
+            Assert.Equal(user.SurName, result.SurName);
+            Assert.Equal(user.ProfilePicture, result.ProfilePicture);
+        }
+
+        [Fact]
+        public async Task GetUserByIdAsync_ReturnsNull_WhenUserDoesNotExist()
+        {
+            
+            var userId = Guid.NewGuid();
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(userId)).ReturnsAsync((Users?)null);
+
+            var result = await _userService.GetUserByIdAsync(userId);
+            
+            Assert.Null(result);
+        }
     }
 }
+
