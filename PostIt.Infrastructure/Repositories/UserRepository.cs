@@ -13,10 +13,10 @@ namespace PostIt.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<Users?> GetUserByIdAsync(Guid id)  // Use Guid instead of int
+        public async Task<Users?> GetUserByIdAsync(Guid id)  
         {
             return await _context.Users
-                .Where(u => u.Id == id)  // This comparison is now valid
+                .Where(u => u.Id == id)  
                 .Select(u => new Users
                 {
                     Id = u.Id,
