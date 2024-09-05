@@ -31,5 +31,23 @@ namespace PostIt.Application.Services
 
             await _userRepository.AddAsync(user);
         }
+        public async Task<UserDetailDto?> GetUserByIdAsync(Guid id)  
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new UserDetailDto
+            {
+                Username = user.Username,
+                FirstName = user.FirstName,
+                SurName = user.SurName,
+                ProfilePicture = user.ProfilePicture
+            };
+        }
+
     }
 }

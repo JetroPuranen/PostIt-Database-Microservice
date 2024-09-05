@@ -73,5 +73,18 @@ namespace PostIt.Database.Controllers
             await _unfollowService.RemoveFollowerAsync(unfollowDto);
             return Ok("Unfollowed user successfully.");
         }
+
+        [HttpGet("getUser/{id}")]
+        public async Task<IActionResult> GetUserById(Guid id)  
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound($"User with ID {id} not found.");
+            }
+
+            return Ok(user);
+        }
     }
 }
