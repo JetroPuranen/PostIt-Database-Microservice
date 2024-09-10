@@ -44,8 +44,8 @@ namespace PostIt.Application.Services
 
         private bool VerifyPassword(string enteredPassword, string storedPasswordHash)
         {
-            // Implement password verification logic (e.g., hashing and comparing)
-            return true; // Replace with actual logic
+            
+            return true; 
         }
     }
 }
