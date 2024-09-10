@@ -15,6 +15,7 @@ namespace Tests.Controllers
         private readonly Mock<IPostService> _postServiceMock;
         private readonly Mock<IFollowerService> _followerServiceMock;
         private readonly Mock<IUnfollowService> _unfollowServiceMock;
+        private readonly Mock<IAuthService> _authServiceMock;
         private readonly DatabaseController _controller;
 
         public DatabaseControllerTests()
@@ -23,12 +24,15 @@ namespace Tests.Controllers
             _postServiceMock = new Mock<IPostService>();
             _followerServiceMock = new Mock<IFollowerService>();
             _unfollowServiceMock = new Mock<IUnfollowService>();
+            _authServiceMock = new Mock<IAuthService>();
+
 
             _controller = new DatabaseController(
                 _userServiceMock.Object,
                 _postServiceMock.Object,
                 _followerServiceMock.Object,
-                _unfollowServiceMock.Object);
+                _unfollowServiceMock.Object,
+                _authServiceMock.Object);
         }
 
         [Fact]
