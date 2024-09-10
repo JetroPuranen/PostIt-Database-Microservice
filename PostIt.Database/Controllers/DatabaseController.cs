@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PostIt.Application.Dto;
 using PostIt.Application.Interfaces;
-
 
 namespace PostIt.Database.Controllers
 {
@@ -13,20 +13,36 @@ namespace PostIt.Database.Controllers
         private readonly IPostService _postService;
         private readonly IFollowerService _followerService;
         private readonly IUnfollowService _unfollowService;
+        private readonly IAuthService _authService;
 
         public DatabaseController(
             IUserService userService,
             IPostService postService,
             IFollowerService followerService,
-            IUnfollowService unfollowService)
+            IUnfollowService unfollowService,
+            IAuthService authService)
         {
             _userService = userService;
             _postService = postService;
             _followerService = followerService;
             _unfollowService = unfollowService;
+            _authService = authService;
+        }
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            var token = await _authService.AuthenticateAsync(loginDto.Username, loginDto.Password);
+            if (token == null)
+            {
+                return Unauthorized("Invalid username or password.");
+            }
+            return Ok(new { Token = token });
         }
 
         [HttpPost("addUser")]
+        [AllowAnonymous]
         public async Task<IActionResult> AddUser([FromBody] UserDto userDto)
         {
             if (userDto == null)
@@ -39,6 +55,7 @@ namespace PostIt.Database.Controllers
         }
 
         [HttpPost("addPost")]
+        [Authorize]
         public async Task<IActionResult> AddPost([FromBody] PostDto postDto)
         {
             if (postDto == null)
@@ -51,6 +68,7 @@ namespace PostIt.Database.Controllers
         }
 
         [HttpPost("addFollower")]
+        [Authorize]
         public async Task<IActionResult> AddFollower([FromBody] FollowerDto followerDto)
         {
             if (followerDto == null)
@@ -63,6 +81,7 @@ namespace PostIt.Database.Controllers
         }
 
         [HttpPost("unfollowUser")]
+        [Authorize]
         public async Task<IActionResult> UnfollowUser([FromBody] UnfollowDto unfollowDto)
         {
             if (unfollowDto == null)
@@ -75,7 +94,8 @@ namespace PostIt.Database.Controllers
         }
 
         [HttpGet("getUser/{id}")]
-        public async Task<IActionResult> GetUserById(Guid id)  
+        [Authorize]
+        public async Task<IActionResult> GetUserById(Guid id)
         {
             var user = await _userService.GetUserByIdAsync(id);
 
@@ -86,7 +106,9 @@ namespace PostIt.Database.Controllers
 
             return Ok(user);
         }
+
         [HttpDelete("deleteUser/{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             await _userService.DeleteUserAsync(id);
