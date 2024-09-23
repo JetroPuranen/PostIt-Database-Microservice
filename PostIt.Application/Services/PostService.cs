@@ -17,7 +17,7 @@ namespace PostIt.Application.Services
 
         public async Task AddPostAsync(PostDto postDto)
         {
-            // Map the PostDto to the Posts entity
+           
             var post = new Posts
             {
                 UserId = postDto.UserId,
@@ -26,7 +26,7 @@ namespace PostIt.Application.Services
                 User = postDto.User
             };
 
-            // Add the post to the repository
+            
             await _postRepository.AddAsync(post);
         }
     }
