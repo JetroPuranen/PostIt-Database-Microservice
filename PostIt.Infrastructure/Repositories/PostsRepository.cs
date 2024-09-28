@@ -26,7 +26,7 @@ namespace PostIt.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Posts?> GetByIdAsync(Guid id)
+        public async Task<Posts?> GetPostByIdAsync(Guid id)
         {
             return await _context.Posts.FindAsync(id);
         }
