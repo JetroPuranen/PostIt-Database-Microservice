@@ -19,5 +19,16 @@ namespace PostIt.Infrastructure.Repositories
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateAsync(Posts post)
+        {
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Posts?> GetByIdAsync(Guid id)
+        {
+            return await _context.Posts.FindAsync(id);
+        }
     }
 }
