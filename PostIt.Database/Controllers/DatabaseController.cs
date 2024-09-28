@@ -66,6 +66,23 @@ namespace PostIt.Database.Controllers
             return Ok("Post created successfully.");
         }
 
+        [HttpPut("updatePost/{id}")]
+        public async Task<IActionResult> UpdatePost(Guid id, [FromBody] PostDto postDto)
+        {
+            if (postDto == null)
+            {
+                return BadRequest("Post data is null.");
+            }
+
+            var result = await _postService.UpdatePostAsync(id, postDto);
+            if (!result)
+            {
+                return NotFound("Post not found.");
+            }
+
+            return Ok("Post updated successfully.");
+        }
+
         [HttpPost("addFollower")]
         public async Task<IActionResult> AddFollower([FromBody] FollowerDto followerDto)
         {

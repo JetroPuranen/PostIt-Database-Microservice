@@ -45,7 +45,7 @@ namespace PostIt.Infrastructure.Data
 
                 entity.Property(u => u.Password)
                     .IsRequired()
-                    .HasMaxLength(256); 
+                    .HasMaxLength(256);
 
                 entity.HasMany(u => u.Followers)
                     .WithMany(u => u.Following)
@@ -63,7 +63,7 @@ namespace PostIt.Infrastructure.Data
                             .OnDelete(DeleteBehavior.Restrict));
 
                 entity.HasMany(u => u.Posts)
-                    .WithOne(p => p.User)
+                    .WithOne()
                     .HasForeignKey(p => p.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -77,7 +77,14 @@ namespace PostIt.Infrastructure.Data
 
                 entity.Property(p => p.ImageData)
                     .IsRequired();
+
+                
+                entity.HasOne<Users>()
+                    .WithMany(u => u.Posts)
+                    .HasForeignKey(p => p.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
+
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PostIt.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PostIt.Infrastructure.Data;
 namespace PostIt.Infrastructure.Migrations
 {
     [DbContext(typeof(PostItDbContext))]
-    partial class PostItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240926082350_MinorRefactor")]
+    partial class MinorRefactor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,12 +55,17 @@ namespace PostIt.Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("UsersId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WhoHasLiked")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UsersId");
 
                     b.ToTable("Posts");
                 });
@@ -132,10 +140,14 @@ namespace PostIt.Infrastructure.Migrations
             modelBuilder.Entity("PostIt.Domain.Entities.Posts", b =>
                 {
                     b.HasOne("PostIt.Domain.Entities.Users", null)
-                        .WithMany("Posts")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("PostIt.Domain.Entities.Users", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("UsersId");
                 });
 
             modelBuilder.Entity("UserFollowers", b =>
