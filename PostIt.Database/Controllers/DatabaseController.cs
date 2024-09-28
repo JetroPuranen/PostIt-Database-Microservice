@@ -126,5 +126,15 @@ namespace PostIt.Database.Controllers
             await _userService.DeleteUserAsync(id);
             return Ok("User deleted successfully.");
         }
+        [HttpGet("getPost/{id}")]
+        public async Task<IActionResult> GetPostById(Guid id)
+        {
+            var post = await _postService.GetPostByIdAsync(id);
+            if(post == null)
+            {
+                return NotFound("Post not found with id" + id);
+            }
+            return Ok(post);
+        }
     }
 }
