@@ -1,25 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using PostIt.Application.Interfaces;
+﻿using PostIt.Application.Interfaces;
 using PostIt.Domain.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+
 
 namespace PostIt.Application.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration)
+        public AuthService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _configuration = configuration;
         }
 
-        public async Task<string?> AuthenticateAsync(string username, string password)
+        // Modify AuthenticateAsync to return userId instead of token
+        public async Task<Guid?> AuthenticateAsync(string username, string password)
         {
             var user = await _userRepository.GetUserByUsernameAsync(username);
             if (user == null || !VerifyPassword(password, user.Password))
@@ -27,19 +22,8 @@ namespace PostIt.Application.Services
                 return null;
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler(); 
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Secret"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, user.Username)
-                }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            // If the password matches, return the UserId
+            return user.Id;
         }
 
         private bool VerifyPassword(string enteredPassword, string storedPasswordHash)
@@ -48,4 +32,6 @@ namespace PostIt.Application.Services
             return true; 
         }
     }
+
+    
 }
