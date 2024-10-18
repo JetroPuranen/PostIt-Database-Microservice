@@ -2,7 +2,7 @@
 using PostIt.Application.Interfaces;
 using PostIt.Domain.Entities;
 using PostIt.Domain.Interfaces;
-
+using System.Linq;
 
 namespace PostIt.Application.Services
 {
@@ -57,6 +57,20 @@ namespace PostIt.Application.Services
                 throw new ArgumentException("User not found");
             }
             await _userRepository.DeleteUserAsync(id);
+        }
+        public async Task<List<UserDetailDto?>> GetUsersByUsernameAsync(string username)
+        {
+            var users = await _userRepository.GetUsersByUsernameAsync(username); // Assuming this returns List<Users>
+            var userDetails = users.Select(user => new UserDetailDto
+            {
+                UserId = user.Id,
+                Username = user.Username,
+                FirstName = user.FirstName,
+                SurName = user.SurName,
+                ProfilePicture = user.ProfilePicture
+            }).ToList();
+
+            return userDetails; // Return the list of UserDetailDto
         }
 
     }

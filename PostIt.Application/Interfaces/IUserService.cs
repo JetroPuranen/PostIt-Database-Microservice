@@ -9,5 +9,7 @@ namespace PostIt.Application.Interfaces
         Task<UserDetailDto?> GetUserByIdAsync(Guid id);
 
         Task DeleteUserAsync(Guid id);
+
+        Task<List<UserDetailDto?>> GetUsersByUsernameAsync(string username);
     }
 }
