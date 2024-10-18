@@ -136,5 +136,17 @@ namespace PostIt.Database.Controllers
             }
             return Ok(post);
         }
+        [HttpGet("getPostsByUser/{userId}")]
+        public async Task<IActionResult> GetPostsByUser(Guid userId)
+        {
+            var posts = await _postService.GetPostsByUserIdAsync(userId);
+
+            if (posts == null || !posts.Any())
+            {
+                return NotFound($"No posts found for user with ID {userId}");
+            }
+
+            return Ok(posts);
+        }
     }
 }

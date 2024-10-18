@@ -55,14 +55,29 @@ namespace PostIt.Application.Services
 
             return new PostDto
             {
-                ImageData = post.ImageData,
                 Caption = post.Caption,
                 Comments = post.Comments,
                 LikeCount = post.LikeCount,
                 WhoHasLiked = post.WhoHasLiked,
+                ImageData = post.ImageData,
 
             };
 
+        }
+        public async Task<IEnumerable<PostDto>> GetPostsByUserIdAsync(Guid userId)
+        {
+            var posts = await _postRepository.GetPostsByUserIdAsync(userId);
+
+            return posts.Select(post => new PostDto
+            {
+                Id = post.Id,
+                UserId = post.UserId,
+                Caption = post.Caption,
+                Comments = post.Comments,
+                LikeCount = post.LikeCount,
+                WhoHasLiked = post.WhoHasLiked,
+                ImageData = post.ImageData
+            });
         }
     }
 }

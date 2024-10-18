@@ -2,6 +2,7 @@
 {
     public class PostDto
     {
+        public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public byte[] ImageData { get; set; }
         public string? Caption { get; set; }
