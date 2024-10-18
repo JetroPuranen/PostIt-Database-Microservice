@@ -27,6 +27,13 @@ namespace PostIt.Infrastructure.Repositories
                 })
                 .FirstOrDefaultAsync();
         }
+        public async Task<IEnumerable<Users>> GetUsersByUsernameAsync(string username)
+        {
+            return await _context.Users
+                .Where(u => u.Username.Contains(username)) // Use Contains to allow partial matches
+                .ToListAsync();
+        }
+
         public async Task<Users> GetUserByUsernameAsync(string username)
         {
             return await _context.Users
