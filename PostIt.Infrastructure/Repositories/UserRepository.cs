@@ -13,17 +13,28 @@ namespace PostIt.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<Users?> GetUserByIdAsync(Guid id)  
+        public async Task<Users?> GetUserByIdAsync(Guid id)
         {
             return await _context.Users
-                .Where(u => u.Id == id)  
+                .Where(u => u.Id == id)
                 .Select(u => new Users
                 {
                     Id = u.Id,
                     Username = u.Username,
                     FirstName = u.FirstName,
                     SurName = u.SurName,
-                    ProfilePicture = u.ProfilePicture
+                    BirthDay = u.BirthDay,
+                    ProfilePicture = u.ProfilePicture,
+                    Followers = u.Followers.Select(f => new Users
+                    {
+                        Id = f.Id,
+                        Username = f.Username
+                    }).ToList(),
+                    Following = u.Following.Select(f => new Users
+                    {
+                        Id = f.Id,
+                        Username = f.Username
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
         }

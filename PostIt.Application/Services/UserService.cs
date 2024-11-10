@@ -25,7 +25,7 @@ namespace PostIt.Application.Services
                 SurName = userDto.SurName,
                 EmailAddress = userDto.EmailAddress,
                 HomeAddress = userDto.HomeAddress,
-                BirthDay = userDto.BirthDay,
+                BirthDay = userDto.BirthDay.Date,
                 ProfilePicture = userDto.ProfilePicture
             };
 
@@ -45,7 +45,20 @@ namespace PostIt.Application.Services
                 Username = user.Username,
                 FirstName = user.FirstName,
                 SurName = user.SurName,
-                ProfilePicture = user.ProfilePicture
+                BirhtDay = user.BirthDay,
+                Followers = user.Followers.Select(f => new SimpleUserDto
+                {
+                    UserId = f.Id,
+                    Username = f.Username
+                }).ToList(),
+                Following = user.Following.Select(f => new SimpleUserDto
+                {
+                    UserId = f.Id,
+                    Username = f.Username
+                }).ToList(),
+
+                ProfilePicture = user.ProfilePicture,
+                
             };
         }
 
