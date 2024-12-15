@@ -34,7 +34,7 @@ namespace PostIt.Application.Services
 
         public async Task<bool> UpdatePostAsync(Guid id, PostDto postDto)
         {
-            var post = await _postRepository.GetByIdAsync(id);
+            var post = await _postRepository.GetPostByIdAsync(id);
             if (post == null)
             {
                 return false;
@@ -47,6 +47,37 @@ namespace PostIt.Application.Services
 
             await _postRepository.UpdateAsync(post);
             return true;
+        }
+
+        public async Task<PostDto?> GetPostByIdAsync(Guid id)
+        {
+            var post = await _postRepository.GetPostByIdAsync(id);
+
+            return new PostDto
+            {
+                Caption = post.Caption,
+                Comments = post.Comments,
+                LikeCount = post.LikeCount,
+                WhoHasLiked = post.WhoHasLiked,
+                ImageData = post.ImageData,
+
+            };
+
+        }
+        public async Task<IEnumerable<PostDto>> GetPostsByUserIdAsync(Guid userId)
+        {
+            var posts = await _postRepository.GetPostsByUserIdAsync(userId);
+
+            return posts.Select(post => new PostDto
+            {
+                Id = post.Id,
+                UserId = post.UserId,
+                Caption = post.Caption,
+                Comments = post.Comments,
+                LikeCount = post.LikeCount,
+                WhoHasLiked = post.WhoHasLiked,
+                ImageData = post.ImageData
+            });
         }
     }
 }

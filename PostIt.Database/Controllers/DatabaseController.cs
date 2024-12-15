@@ -126,5 +126,46 @@ namespace PostIt.Database.Controllers
             await _userService.DeleteUserAsync(id);
             return Ok("User deleted successfully.");
         }
+        [HttpGet("getPost/{id}")]
+        public async Task<IActionResult> GetPostById(Guid id)
+        {
+            var post = await _postService.GetPostByIdAsync(id);
+            if(post == null)
+            {
+                return NotFound("Post not found with id" + id);
+            }
+            return Ok(post);
+        }
+        [HttpGet("getPostsByUser/{userId}")]
+        public async Task<IActionResult> GetPostsByUser(Guid userId)
+        {
+            var posts = await _postService.GetPostsByUserIdAsync(userId);
+
+            if (posts == null || !posts.Any())
+            {
+                return NotFound($"No posts found for user with ID {userId}");
+            }
+
+            return Ok(posts);
+        }
+
+        [HttpGet("getUserByUsername/{username}")]
+        public async Task<IActionResult> GetUserByUsername(string username)
+        {
+            username = username.Trim(); // Remove leading and trailing whitespace
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return BadRequest("Username cannot be empty.");
+            }
+
+            var users = await _userService.GetUsersByUsernameAsync(username);
+
+            if (users == null || !users.Any()) // Checking for an empty list
+            {
+                return NotFound($"No users found matching '{username}'.");
+            }
+
+            return Ok(users); // Return the list of users
+        }
     }
 }

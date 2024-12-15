@@ -81,16 +81,21 @@ namespace Tests.Controllers
         [Fact]
         public async Task AddFollower_ReturnsOk_WhenFollowerIsAddedSuccessfully()
         {
-            var followerDto = new FollowerDto { Username = "Username", FollowerUsername = "FollowUsername" };
+            var followerDto = new FollowerDto
+            {
+                UserId = Guid.Parse("B46729FC-0B0D-40CF-82BE-1C918AEE58F6"),
+                FollowerUserId = Guid.Parse("4140E972-D0A2-4ECB-8C93-141205DE118E")
+            };
 
             _followerServiceMock.Setup(service => service.AddFollowerAsync(followerDto))
-                                .Returns(Task.CompletedTask);
+                                 .Returns(Task.CompletedTask);
 
             var result = await _controller.AddFollower(followerDto);
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal("Follower added successfully.", okResult.Value);
         }
+
 
         [Fact]
         public async Task UnfollowUser_ReturnsBadRequest_WhenUnfollowDtoIsNull()
@@ -104,7 +109,11 @@ namespace Tests.Controllers
         [Fact]
         public async Task UnfollowUser_ReturnsOk_WhenUserIsUnfollowedSuccessfully()
         {
-            var unfollowDto = new UnfollowDto { Username = "Username", UnfollowUsername = "UnfollowUsername" };
+            var unfollowDto = new UnfollowDto
+            {
+                UserId = Guid.Parse("4140E972-D0A2-4ECB-8C93-141205DE118E"),
+                UnfollowUserId = Guid.Parse("B46729FC-0B0D-40CF-82BE-1C918AEE58F6")
+            };
 
             _unfollowServiceMock.Setup(service => service.RemoveFollowerAsync(unfollowDto))
                                 .Returns(Task.CompletedTask);
@@ -114,6 +123,7 @@ namespace Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal("Unfollowed user successfully.", okResult.Value);
         }
+
 
         [Fact]
         public async Task GetUserById_ReturnsNotFound_WhenUserDoesNotExist()

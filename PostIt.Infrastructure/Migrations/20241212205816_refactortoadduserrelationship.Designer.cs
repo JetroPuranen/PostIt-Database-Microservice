@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PostIt.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PostIt.Infrastructure.Data;
 namespace PostIt.Infrastructure.Migrations
 {
     [DbContext(typeof(PostItDbContext))]
-    partial class PostItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241212205816_refactortoadduserrelationship")]
+    partial class refactortoadduserrelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,13 +144,13 @@ namespace PostIt.Infrastructure.Migrations
             modelBuilder.Entity("PostIt.Domain.Entities.UserFollowers", b =>
                 {
                     b.HasOne("PostIt.Domain.Entities.Users", "Follower")
-                        .WithMany("Following")
+                        .WithMany("Followers")
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PostIt.Domain.Entities.Users", "Following")
-                        .WithMany("Followers")
+                        .WithMany("Following")
                         .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

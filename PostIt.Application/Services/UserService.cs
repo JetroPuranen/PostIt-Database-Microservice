@@ -2,7 +2,7 @@
 using PostIt.Application.Interfaces;
 using PostIt.Domain.Entities;
 using PostIt.Domain.Interfaces;
-
+using System.Linq;
 
 namespace PostIt.Application.Services
 {
@@ -25,13 +25,13 @@ namespace PostIt.Application.Services
                 SurName = userDto.SurName,
                 EmailAddress = userDto.EmailAddress,
                 HomeAddress = userDto.HomeAddress,
-                BirthDay = userDto.BirthDay,
+                BirthDay = userDto.BirthDay.Date,
                 ProfilePicture = userDto.ProfilePicture
             };
 
             await _userRepository.AddAsync(user);
         }
-        public async Task<UserDetailDto?> GetUserByIdAsync(Guid id)  
+        public async Task<UserDetailDto?> GetUserByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
 
@@ -42,10 +42,22 @@ namespace PostIt.Application.Services
 
             return new UserDetailDto
             {
+                UserId = user.Id,
                 Username = user.Username,
                 FirstName = user.FirstName,
                 SurName = user.SurName,
-                ProfilePicture = user.ProfilePicture
+                BirhtDay = user.BirthDay,
+                Followers = user.Followers.Select(f => new SimpleUserDto
+                {
+                    UserId = f.Follower.Id,        
+                    Username = f.Follower.Username 
+                }).ToList(),
+                Following = user.Following.Select(f => new SimpleUserDto
+                {
+                    UserId = f.Following.Id,        
+                    Username = f.Following.Username 
+                }).ToList(),
+                ProfilePicture = user.ProfilePicture,
             };
         }
 
@@ -57,6 +69,20 @@ namespace PostIt.Application.Services
                 throw new ArgumentException("User not found");
             }
             await _userRepository.DeleteUserAsync(id);
+        }
+        public async Task<List<UserDetailDto?>> GetUsersByUsernameAsync(string username)
+        {
+            var users = await _userRepository.GetUsersByUsernameAsync(username); // Assuming this returns List<Users>
+            var userDetails = users.Select(user => new UserDetailDto
+            {
+                UserId = user.Id,
+                Username = user.Username,
+                FirstName = user.FirstName,
+                SurName = user.SurName,
+                ProfilePicture = user.ProfilePicture
+            }).ToList();
+
+            return userDetails; // Return the list of UserDetailDto
         }
 
     }

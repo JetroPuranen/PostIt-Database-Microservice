@@ -7,6 +7,8 @@ namespace PostIt.Domain.Interfaces
     {
         Task AddAsync(Posts post);
         Task UpdateAsync(Posts post);
-        Task<Posts?> GetByIdAsync(Guid id);
+        Task<Posts?> GetPostByIdAsync(Guid id);
+
+        Task<IEnumerable<Posts>> GetPostsByUserIdAsync(Guid userId);
     }
 }

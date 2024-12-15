@@ -1,4 +1,5 @@
-﻿using PostIt.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using PostIt.Domain.Entities;
 using PostIt.Domain.Interfaces;
 using PostIt.Infrastructure.Data;
 
@@ -26,9 +27,16 @@ namespace PostIt.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Posts?> GetByIdAsync(Guid id)
+        public async Task<Posts?> GetPostByIdAsync(Guid id)
         {
             return await _context.Posts.FindAsync(id);
+        }
+        public async Task<IEnumerable<Posts?>> GetPostsByUserIdAsync(Guid userId)
+        {
+            
+            return await _context.Posts
+                                 .Where(p => p.UserId == userId)
+                                 .ToListAsync();
         }
     }
 }
