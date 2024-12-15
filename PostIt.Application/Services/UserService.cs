@@ -31,7 +31,7 @@ namespace PostIt.Application.Services
 
             await _userRepository.AddAsync(user);
         }
-        public async Task<UserDetailDto?> GetUserByIdAsync(Guid id)  
+        public async Task<UserDetailDto?> GetUserByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
 
@@ -42,23 +42,22 @@ namespace PostIt.Application.Services
 
             return new UserDetailDto
             {
+                UserId = user.Id,
                 Username = user.Username,
                 FirstName = user.FirstName,
                 SurName = user.SurName,
                 BirhtDay = user.BirthDay,
                 Followers = user.Followers.Select(f => new SimpleUserDto
                 {
-                    UserId = f.Id,
-                    Username = f.Username
+                    UserId = f.Follower.Id,        
+                    Username = f.Follower.Username 
                 }).ToList(),
                 Following = user.Following.Select(f => new SimpleUserDto
                 {
-                    UserId = f.Id,
-                    Username = f.Username
+                    UserId = f.Following.Id,        
+                    Username = f.Following.Username 
                 }).ToList(),
-
                 ProfilePicture = user.ProfilePicture,
-                
             };
         }
 
