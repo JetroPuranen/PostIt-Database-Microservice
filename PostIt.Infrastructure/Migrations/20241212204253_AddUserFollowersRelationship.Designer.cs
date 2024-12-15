@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PostIt.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PostIt.Infrastructure.Data;
 namespace PostIt.Infrastructure.Migrations
 {
     [DbContext(typeof(PostItDbContext))]
-    partial class PostItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241212204253_AddUserFollowersRelationship")]
+    partial class AddUserFollowersRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,8 +33,8 @@ namespace PostIt.Infrastructure.Migrations
 
                     b.Property<string>("Caption")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Comments")
                         .HasColumnType("nvarchar(max)");
@@ -141,13 +144,13 @@ namespace PostIt.Infrastructure.Migrations
             modelBuilder.Entity("PostIt.Domain.Entities.UserFollowers", b =>
                 {
                     b.HasOne("PostIt.Domain.Entities.Users", "Follower")
-                        .WithMany("Following")
+                        .WithMany()
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PostIt.Domain.Entities.Users", "Following")
-                        .WithMany("Followers")
+                        .WithMany()
                         .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -159,10 +162,6 @@ namespace PostIt.Infrastructure.Migrations
 
             modelBuilder.Entity("PostIt.Domain.Entities.Users", b =>
                 {
-                    b.Navigation("Followers");
-
-                    b.Navigation("Following");
-
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

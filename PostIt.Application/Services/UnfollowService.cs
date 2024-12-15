@@ -16,14 +16,14 @@ namespace PostIt.Application.Services
 
         public async Task RemoveFollowerAsync(UnfollowDto unfollowDto)
         {
-            if (unfollowDto == null || string.IsNullOrEmpty(unfollowDto.Username) || string.IsNullOrEmpty(unfollowDto.UnfollowUsername))
+            if (unfollowDto == null || unfollowDto.UserId == Guid.Empty || unfollowDto.UnfollowUserId == Guid.Empty)
             {
-                throw new ArgumentException("Invalid unfollow data provided.");
+                throw new ArgumentException("Invalid follower data provided.");
             }
 
-            
-            var user = await _userRepository.GetUserByUsernameAsync(unfollowDto.Username);
-            var unfollowUser = await _userRepository.GetUserByUsernameAsync(unfollowDto.UnfollowUsername);
+            // Fetch both users from the repository
+            var user = await _userRepository.GetUserByIdAsync(unfollowDto.UserId);
+            var unfollowUser = await _userRepository.GetUserByIdAsync(unfollowDto.UnfollowUserId);
 
             if (user == null || unfollowUser == null)
             {
@@ -31,19 +31,10 @@ namespace PostIt.Application.Services
             }
 
             
-            var userFollowing = user.Following.FirstOrDefault(f => f.Username == unfollowUser.Username);
-            if (userFollowing == null)
-            {
-                throw new InvalidOperationException("The user is not following the specified user.");
-            }
 
-            
-            user.Following.Remove(userFollowing);
-            unfollowUser.Followers.Remove(unfollowUser.Followers.First(f => f.Username == user.Username));
-
-           
-            await _userRepository.UpdateAsync(user);
-            await _userRepository.UpdateAsync(unfollowUser);
+            // Delegate the actual update to the repository
+            await _userRepository.UpdateUnfollowAsync(user.Id, unfollowUser.Id);
         }
+
     }
 }

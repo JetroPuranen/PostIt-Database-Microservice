@@ -1,6 +1,7 @@
 ﻿using PostIt.Application.Dto;
 using PostIt.Application.Interfaces;
 using PostIt.Domain.Interfaces;
+using System.Linq;
 
 namespace PostIt.Application.Services
 {
@@ -15,40 +16,40 @@ namespace PostIt.Application.Services
 
         public async Task AddFollowerAsync(FollowerDto followerDto)
         {
-            if (followerDto == null || string.IsNullOrEmpty(followerDto.Username) || string.IsNullOrEmpty(followerDto.FollowerUsername))
+            if (followerDto == null || followerDto.UserId == Guid.Empty || followerDto.FollowerUserId == Guid.Empty)
             {
                 throw new ArgumentException("Invalid follower data provided.");
             }
 
-            // Get both users from the repository
-            var user = await _userRepository.GetUserByUsernameAsync(followerDto.Username);
-            var follower = await _userRepository.GetUserByUsernameAsync(followerDto.FollowerUsername);
+            // Ensure the user is not following themselves
+            if (followerDto.UserId == followerDto.FollowerUserId)
+            {
+                throw new InvalidOperationException("User cannot follow themselves.");
+            }
 
-            if (user == null || follower == null)
+            // Fetch both users from the repository
+            var userToFollow = await _userRepository.GetUserByIdAsync(followerDto.UserId);
+            var follower = await _userRepository.GetUserByIdAsync(followerDto.FollowerUserId);
+
+            if (userToFollow == null || follower == null)
             {
                 throw new Exception("User or follower not found.");
             }
 
-            // Check if the follower is already following the user
-            if (user.Followers.Any(f => f.Username == follower.Username))
+            // Avoid adding the same follower again
+            var existingFollower = userToFollow.Followers
+                .FirstOrDefault(uf => uf.FollowerId == follower.Id);
+
+            if (existingFollower != null)
             {
-                // Follower already exists in the user's follower list, no need to add
-                throw new InvalidOperationException("The user is already followed by this follower.");
+                throw new InvalidOperationException("Follower already exists.");
             }
 
-            // Check if the user already follows the follower (to prevent duplicate following)
-            if (follower.Following.Any(f => f.Username == user.Username))
-            {
-                throw new InvalidOperationException("The follower already follows this user.");
-            }
-
-            // Add to Followers and Following lists
-            user.Followers.Add(follower);
-            follower.Following.Add(user);
-
-            // Update the users in the repository
-            await _userRepository.UpdateAsync(user);
-            await _userRepository.UpdateAsync(follower);
+            // Delegate the actual update to the UpdateFollowerAsync method
+            await _userRepository.UpdateFollowerAsync(followerDto.UserId, followerDto.FollowerUserId);
         }
+
     }
 }
+
+
