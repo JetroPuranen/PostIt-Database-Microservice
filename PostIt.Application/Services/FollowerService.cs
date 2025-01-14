@@ -38,7 +38,7 @@ namespace PostIt.Application.Services
 
             // Avoid adding the same follower again
             var existingFollower = userToFollow.Followers
-                .FirstOrDefault(uf => uf.FollowerId == follower.Id);
+                .FirstOrDefault(uf => uf.FollowingId == follower.Id);
 
             if (existingFollower != null)
             {
@@ -51,5 +51,3 @@ namespace PostIt.Application.Services
 
     }
 }
-
-
