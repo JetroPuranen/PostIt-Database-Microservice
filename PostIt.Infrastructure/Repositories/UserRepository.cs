@@ -22,7 +22,7 @@ namespace PostIt.Infrastructure.Repositories
 
             if (user != null)
             {
-                
+
                 await _context.Entry(user)
                     .Collection(u => u.Followers)
                     .Query()
@@ -75,22 +75,22 @@ namespace PostIt.Infrastructure.Repositories
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
-        public async Task UpdateFollowerAsync(Guid followerId, Guid userId)
+        public async Task UpdateFollowerAsync(Guid userId, Guid followerId)
         {
             // Fetch the user and follower from the database
             var userToFollow = await _context.Users
                 .Include(u => u.Followers)
-                .FirstOrDefaultAsync(u => u.Id == userId);
+                .FirstOrDefaultAsync(u => u.Id == followerId);
 
             var follower = await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == followerId);
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
             if (userToFollow == null || follower == null)
             {
                 throw new ArgumentException("User or Follower not found.");
             }
 
-            
+
             if (_context.Entry(userToFollow).State == EntityState.Detached)
             {
                 _context.Attach(userToFollow);
@@ -103,15 +103,15 @@ namespace PostIt.Infrastructure.Repositories
 
             // Check if the follower relationship already exists
             var existingFollower = await _context.UserFollowers
-                .FirstOrDefaultAsync(uf => uf.FollowerId == followerId && uf.FollowingId == userId);
+                .FirstOrDefaultAsync(uf => uf.FollowerId == userId && uf.FollowingId == followerId);
 
             if (existingFollower == null)
             {
                 // Create a new UserFollowers entry for the relationship
                 var newFollower = new UserFollowers
                 {
-                    FollowerId = followerId,
-                    FollowingId = userId
+                    FollowerId = userId,
+                    FollowingId = followerId
                 };
 
                 _context.UserFollowers.Add(newFollower);
