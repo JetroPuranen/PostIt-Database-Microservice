@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PostIt.Domain.Entities;
 
+
 namespace PostIt.Infrastructure.Data
 {
     public class PostItDbContext : DbContext
@@ -13,6 +14,8 @@ namespace PostIt.Infrastructure.Data
         public DbSet<Posts> Posts { get; set; }
         public DbSet<UserFollowers> UserFollowers { get; set; }
 
+        public DbSet<PostComment> PostComments { get; set; }
+        public DbSet<PostLike> PostLikes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -60,9 +63,9 @@ namespace PostIt.Infrastructure.Data
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasMany(u => u.Posts)
-                    .WithOne()
-                    .HasForeignKey(p => p.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                      .WithOne()
+                      .HasForeignKey(p => p.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configure UserFollowers
@@ -86,6 +89,39 @@ namespace PostIt.Infrastructure.Data
             {
                 entity.HasKey(p => p.Id);
                 entity.Property(p => p.Caption).IsRequired().HasMaxLength(1000);
+
+                entity.HasMany(p => p.Comments)
+                      .WithOne(c => c.Post)
+                      .HasForeignKey(c => c.PostId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(p => p.Likes)
+                      .WithOne(l => l.Post)
+                      .HasForeignKey(l => l.PostId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configure PostComment
+            modelBuilder.Entity<PostComment>(entity =>
+            {
+                entity.HasKey(pc => pc.Id);
+                entity.Property(pc => pc.Comment).IsRequired().HasMaxLength(1000);
+
+                entity.HasOne(pc => pc.User)
+                      .WithMany()
+                      .HasForeignKey(pc => pc.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure PostLike
+            modelBuilder.Entity<PostLike>(entity =>
+            {
+                entity.HasKey(pl => pl.Id);
+
+                entity.HasOne(pl => pl.User)
+                      .WithMany()
+                      .HasForeignKey(pl => pl.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
