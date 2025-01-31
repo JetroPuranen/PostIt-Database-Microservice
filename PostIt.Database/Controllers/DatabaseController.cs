@@ -66,22 +66,6 @@ namespace PostIt.Database.Controllers
             return Ok("Post created successfully.");
         }
 
-        [HttpPut("updatePost/{id}")]
-        public async Task<IActionResult> UpdatePost(Guid id, [FromBody] PostDto postDto)
-        {
-            if (postDto == null)
-            {
-                return BadRequest("Post data is null.");
-            }
-
-            var result = await _postService.UpdatePostAsync(id, postDto);
-            if (!result)
-            {
-                return NotFound("Post not found.");
-            }
-
-            return Ok("Post updated successfully.");
-        }
 
         [HttpPost("addFollower")]
         public async Task<IActionResult> AddFollower([FromBody] FollowerDto followerDto)
@@ -166,6 +150,24 @@ namespace PostIt.Database.Controllers
             }
 
             return Ok(users); // Return the list of users
+        }
+        [HttpPut("updatePost")]
+        public async Task<IActionResult> UpdatePost([FromBody] PostUpdateDto postUpdateDto)
+        {
+            if (postUpdateDto == null || postUpdateDto.Id == Guid.Empty)
+            {
+                return BadRequest("Invalid post update data.");
+            }
+
+            try
+            {
+                await _postService.UpdatePostAsync(postUpdateDto);
+                return Ok("Post updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
