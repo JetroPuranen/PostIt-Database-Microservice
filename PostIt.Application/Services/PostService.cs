@@ -1,4 +1,5 @@
-﻿using PostIt.Application.Dto;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using PostIt.Application.Dto;
 using PostIt.Application.Interfaces;
 using PostIt.Domain.Entities;
 using PostIt.Domain.Interfaces;
@@ -50,7 +51,8 @@ namespace PostIt.Application.Services
                 }).ToList(),
                 LikeCount = post.Likes.Count,
                 WhoHasLiked = post.Likes.Select(l => l.UserId).ToList(),
-                WhoHasCommented = post.Comments.Select(c => c.UserId).ToList()
+                WhoHasCommented = post.Comments.Select(c => c.UserId).ToList(),
+                CreatedAt = post.CreatedAt,
             };
         }
 
@@ -71,7 +73,8 @@ namespace PostIt.Application.Services
                 }).ToList(),
                 LikeCount = post.Likes.Count,
                 WhoHasLiked = post.Likes.Select(l => l.UserId).ToList(),
-                WhoHasCommented = post.Comments.Select(c => c.UserId).ToList()
+                WhoHasCommented = post.Comments.Select(c => c.UserId).ToList(),
+                CreatedAt = post.CreatedAt,
             });
         }
 

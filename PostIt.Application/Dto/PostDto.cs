@@ -8,8 +8,9 @@
         public string? Caption { get; set; }
         public List<CommentDto> Comments { get; set; } = new();
         public int? LikeCount { get; set; }
-        public List<Guid>? WhoHasLiked { get; set; } 
+        public List<Guid>? WhoHasLiked { get; set; }
         public List<Guid>? WhoHasCommented { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
     public class CommentDto
     {
