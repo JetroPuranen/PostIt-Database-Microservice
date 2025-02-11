@@ -11,7 +11,7 @@
         public ICollection<PostComment> Comments { get; set; } = new List<PostComment>();
         public ICollection<PostLike> Likes { get; set; } = new List<PostLike>();
 
-
+        public DateTime CreatedAt { get; set; } = new DateTime();
         public Posts ToEntity()
         {
             return new Posts
@@ -22,7 +22,8 @@
                 Caption = this.Caption,
                 Comments = this.Comments,
                 LikeCount = this.LikeCount, 
-                Likes = this.Likes
+                Likes = this.Likes,
+                CreatedAt = this.CreatedAt
             };
         }
     }
